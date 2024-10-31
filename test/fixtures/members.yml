@@ -1,0 +1,47 @@
+admin_member:
+  account: admin_account
+  access_level: admin
+  tenant: toughbyte_tenant
+  token: dummy
+  refresh_token: dummy
+  last_email_synchronization_uid: 1712128953
+
+hiring_manager_member:
+  account: hiring_manager_account
+  access_level: member
+  tenant: toughbyte_tenant
+
+employee_member:
+  account: employee_account
+  access_level: member
+  tenant: toughbyte_tenant
+
+interviewer_member:
+  account: interviewer_account
+  access_level: member
+  tenant: toughbyte_tenant
+
+inactive_member:
+  account: inactive_account
+  access_level: inactive
+  tenant: toughbyte_tenant
+
+helen_member:
+  account: helen_account
+  access_level: member
+  tenant: toughbyte_tenant
+
+george_member:
+  account: george_account
+  access_level: member
+  tenant: toughbyte_tenant
+
+acme_grigoriy_member:
+  account: acme_grigoriy_account
+  access_level: member
+  tenant: acme_tenant
+
+acme_alex_member:
+  account: acme_alex_account
+  access_level: member
+  tenant: acme_tenant

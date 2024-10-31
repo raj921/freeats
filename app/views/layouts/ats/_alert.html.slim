@@ -1,0 +1,21 @@
+/# locals: (text: nil, type: nil, alerts: nil)
+
+- alerts ||= [type:, text:]
+
+#alerts
+  - alerts.each do |alert|
+      ruby:
+        class_name =
+          case alert[:type]
+          when :warning then "alert-warning"
+          when :notice then "alert-success"
+          when :error then "alert-danger"
+          else
+            raise ArgumentError
+          end
+        text = Array(alert[:text]).map { _1.ends_with?(".") ? _1 : "#{_1}." }.join("<br>")
+
+      .notification class=class_name role="alert"
+        = sanitize text, attributes: %w[href rel target]
+        span.notification-close
+          = render IconComponent.new(:x)

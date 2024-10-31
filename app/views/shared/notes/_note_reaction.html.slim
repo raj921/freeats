@@ -1,0 +1,37 @@
+/# locals: (note:, reacted_names:, member_react: false)
+
+ruby:
+  liked_members = reacted_names.join("<br>")
+  unpressed_like_tooltip = liked_members.empty? ? t("notes.like_button") : liked_members
+  add_reaction_url = add_reaction_note_path(note)
+  remove_reaction_url = remove_reaction_note_path(note)
+
+= turbo_frame_tag "note_reaction_#{note.id}"
+  - if member_react
+    span data-note-reactions-target="iconReaction"
+      = form_with url: remove_reaction_url,
+                  class: "d-inline-block form-reaction",
+                  data: { action: "turbo:submit-start->note-reactions#hideTooltip" }
+        = render ButtonComponent.new( \
+                   variant: :cancel,
+                   size: :tiny,
+                   tooltip_title: liked_members,
+                   data: { bs_html: true },
+                 ) do |c|
+          - c.with_icon(:thumb_up, icon_type: :filled, size: c.size, position: :left)
+          span.note-reactions-count
+            = reacted_names.count
+  - else
+    span data-note-reactions-target="iconReaction"
+      = form_with url: add_reaction_url,
+                  class: "d-inline-block form-reaction",
+                  data: { action: "turbo:submit-start->note-reactions#hideTooltip" }
+        = render ButtonComponent.new( \
+                   variant: :cancel,
+                   size: :tiny,
+                   tooltip_title: unpressed_like_tooltip,
+                   data: { bs_html: true },
+                 ) do |c|
+          - c.with_icon(:thumb_up, size: c.size, position: :left)
+          span.note-reactions-count
+            = reacted_names.count

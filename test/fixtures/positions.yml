@@ -1,0 +1,41 @@
+ruby_position:
+  recruiter: admin_member
+  name: Ruby developer
+  status: open
+  change_status_reason: filled
+  tenant: toughbyte_tenant
+  location: helsinki_city
+  slug: ruby-developer-<%= ActiveRecord::FixtureSet.identify(:ruby_position) %>
+
+golang_position:
+  name: Golang developer
+  status: open
+  change_status_reason: filled
+  hiring_managers: [hiring_manager_member]
+  tenant: toughbyte_tenant
+  slug: golang-developer-<%= ActiveRecord::FixtureSet.identify(:golang_position) %>
+
+closed_position:
+  recruiter: admin_member
+  name: Java developer
+  status: closed
+  change_status_reason: other
+  tenant: toughbyte_tenant
+  slug: java-developer-<%= ActiveRecord::FixtureSet.identify(:closed_position) %>
+
+acme_open_position:
+  recruiter: acme_grigoriy_member
+  name: OCaml developer
+  status: open
+  change_status_reason: filled
+  tenant: acme_tenant
+  slug: ocaml-developer-<%= ActiveRecord::FixtureSet.identify(:acme_open_position) %>
+
+acme_close_position:
+  recruiter: acme_grigoriy_member
+  name: Haskell developer
+  status: closed
+  change_status_reason: no_longer_relevant
+  tenant: acme_tenant
+  location: copenhagen_city
+  slug: haskell-developer-<%= ActiveRecord::FixtureSet.identify(:acme_close_position) %>

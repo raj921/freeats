@@ -1,0 +1,41 @@
+admin_member_short_note:
+  text: short note
+  note_thread: thread_one
+  member: admin_member
+  created_at: <%= 2.days.ago %>
+  updated_at: <%= 1.day.ago %>
+  tenant: toughbyte_tenant
+
+admin_member_long_note:
+  text: |
+    @Adrian Barton
+    Long note note long note note long note note long note
+    Long note note long note note long note note long note
+    Long note note long note note long note note long note
+    Long note note long note note long note note long note
+    Long note note long note note long note note long note
+    Long note note long note note long note note long note
+    Long note note long note note long note note long note
+    Long note note long note note long note note long note
+    Long note note long note note long note note long note
+
+    Long note note long note note long note note long note
+    Long note note long note note long note note long note
+    Long note note long note note long note note long note
+    Long note note long note note long note note long note
+    Long note note long note note long note note long note
+  member: admin_member
+  note_thread: thread_two
+  tenant: toughbyte_tenant
+
+interviewer_reply:
+  text: reply
+  member: interviewer_member
+  note_thread: thread_one
+  tenant: toughbyte_tenant
+
+note_task:
+  text: "Note task"
+  member: admin_member
+  note_thread: thread_task
+  tenant: toughbyte_tenant

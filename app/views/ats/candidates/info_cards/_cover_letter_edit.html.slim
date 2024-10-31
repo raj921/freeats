@@ -1,0 +1,10 @@
+/# locals: (candidate:)
+
+- header = card_header(title: t("candidates.cover_letter"), icon_style: :mail_opened)
+
+= candidate_card_edit "cover_letter", candidate, header: do |form|
+  .card
+    .card-body
+      = trix_editor form,
+                    :cover_letter,
+                    value: candidate.cover_letter.presence || candidate.cover_letter_template

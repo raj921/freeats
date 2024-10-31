@@ -1,0 +1,10 @@
+/# locals: (position:, control_button:, namespace: nil)
+
+- header = card_header(title: "Description", icon_style: :file_text)
+
+- if position.description.present?
+  = card_show "description", target_model: position, header:, control_button:
+    .trix-content-custom
+      = trix_sanitize_and_add_target_blank_to_links position.description.body&.to_html
+- elsif allowed_to?(:edit_card?)
+  = card_empty "description", target_model: position

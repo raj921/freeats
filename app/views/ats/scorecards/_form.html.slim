@@ -1,0 +1,132 @@
+/# locals: (scorecard:, interviewers:)
+
+ruby:
+  submit_path =
+    if scorecard.new_record?
+      ats_scorecards_path
+    else
+      ats_scorecard_path(scorecard)
+    end
+
+  cancel_path =
+    if scorecard.new_record?
+      tab_ats_candidate_path(scorecard.placement.candidate, tab: :scorecards)
+    else
+      ats_scorecard_path(scorecard)
+    end
+
+  position_stage = @scorecard.position_stage
+  position_stage_title = "#{position_stage.name} stage"
+  position_stage_title << " (deleted)" if position_stage.deleted
+
+/ TODO: implement storing not saved scorecard data in local storage
+/ Hub has callbacks on `evaluation-form` class.
+/ https://github.com/toughbyte/ats/issues/480
+= form_with model: scorecard, url: submit_path, local: true,
+            html: { class: "form evaluation-form" }, data: { turbo: false } do |form|
+  = form.hidden_field :position_stage_id, value: scorecard.position_stage_id
+  = form.hidden_field :placement_id, value: scorecard.placement_id
+  = form.hidden_field :title, value: scorecard.title
+
+  .h1.mb-3 #{scorecard.title}
+
+  = render LabeledComponent.new( \
+    class: "mb-2",
+    left_layout_class: "col-auto",
+    right_layout_class: "col",
+    right_class: "ps-0 col-form-label-sm" \
+  ) do |c|
+    - c.with_label("Candidate", style: "min-width: 100px;")
+    - candidate = scorecard.placement.candidate
+    = link_to(candidate.full_name, ats_candidate_path(candidate))
+  = render LabeledComponent.new( \
+    class: "mb-2",
+    left_layout_class: "col-auto",
+    right_layout_class: "col",
+    right_class: "ps-0 col-form-label-sm" \
+  ) do |c|
+    - c.with_label("Position", style: "min-width: 100px;")
+    - position = scorecard.placement.position
+    - if allowed_to?(:show?, position, with: ATS::PositionPolicy)
+      = link_to(position.name, ats_position_path(position))
+    - else
+      = position.name
+  = render LabeledComponent.new( \
+    class: "mb-2",
+    left_layout_class: "col-auto",
+    right_layout_class: "col",
+    right_class: "ps-0 col-form-label-sm" \
+  ) do |c|
+    - c.with_label("Stage", style: "min-width: 100px;")
+    = position_stage_title
+  = render LabeledComponent.new( \
+    class: "mb-4",
+    left_layout_class: "col-12 col-md-auto",
+    right_layout_class: "col-12 col-md-5" \
+  ) do |c|
+    - c.with_label("Interviewer", style: "min-width: 88px;", form:, for_field: :interviewer_id)
+    = render SingleSelectComponent.new( \
+      form,
+      method: :interviewer_id,
+      required: true,
+      local: { options: interviewers } \
+    )
+
+  = form.fields_for(:scorecard_questions) do |question_form|
+    .profile-card
+      .card.mb-3
+        .card-header
+          span.card-title
+            = question_form.object.question
+        .card-body
+          .card
+            .card-body
+              - if question_form.object.new_record?
+                = question_form.hidden_field :question, value: question_form.object.question
+              - else
+                = question_form.hidden_field :id, value: question_form.object.id
+              = question_form.rich_text_area :answer,
+                              class: "trix-content-custom p-0 border-0 shadow-none",
+                              rows: 2,
+                              placeholder: ""
+
+  .profile-card
+    .card
+      .card-header
+        span.card-title Summary
+      .card-body
+        span data-bs-toggle="tooltip" data-bs-placement="top" title="This is required question" Score
+        .row.g-1
+          .col-auto
+            = form.radio_button(:score, :irrelevant, required: true, class: "btn-check")
+            = form.label(:score_irrelevant, class: "btn btn-sm btn-outline-danger")
+              = render IconComponent.new(:mood_sad, icon_type: :filled)
+              | <br>Completely<br>irrelevant
+          .col-auto
+            = form.radio_button(:score, :relevant, required: true, class: "btn-check")
+            = form.label(:score_relevant, class: "btn btn-sm btn-outline-warning")
+              = render IconComponent.new(:mood_empty, icon_type: :filled)
+              | <br>Might be<br>irrelevant
+          .col-auto
+            = form.radio_button(:score, :good, required: true, class: "btn-check")
+            = form.label(:score_good, class: "btn btn-sm btn-outline-success")
+              = render IconComponent.new(:mood_smile, icon_type: :filled)
+              | <br>Good<br>candidate
+          .col-auto
+            = form.radio_button(:score, :perfect, required: true, class: "btn-check")
+            = form.label(:score_perfect, class: "btn btn-sm btn-outline-info")
+              = render IconComponent.new(:mood_happy, icon_type: :filled)
+              | <br>Perfect<br>candidate
+        .mt-3
+            | Open-ended feedback
+        .card
+          .card-body
+            = trix_editor form,
+                          :summary,
+                          placeholder: "",
+                          value: scorecard.summary
+  .card-submit.hstack.gap-2.mt-4
+    = render ButtonComponent.new
+      | Save
+    = render ButtonLinkComponent.new(cancel_path, variant: :secondary)
+      | Cancel

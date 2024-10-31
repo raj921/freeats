@@ -1,0 +1,20 @@
+/# locals: (candidate:)
+
+.col-12
+  = form_with url: ats_candidate_placements_path(candidate),
+              data: { turbo_frame: :turbo_modal_window },
+              id: "form-add-placement"
+    .row.my-4
+      / w-50 is a hack to keep the button on the same line as the select field.
+      .col.w-50
+        = render HtmlSelectComponent.new( \
+                   "position_id",
+                   required: true,
+                   placeholder: "Position",
+                   item_as_rich_text: true,
+                   remote: { search_url: ats_candidate_fetch_positions_path(candidate, q: "QUERY") } \
+                 )
+      // TODO: remove .hstack / rewrite layout of partial after input component implemented
+      .col-auto.hstack
+        = render ButtonComponent.new
+          | Add

@@ -1,0 +1,100 @@
+position:
+  name: Go through candidates in pipeline
+  status: open
+  taskable: ruby_position (Position)
+  assignee: admin_member
+  due_date: <%= Time.zone.today %>
+  description: Just some text
+  repeat_interval: daily
+  tenant: toughbyte_tenant
+  watchers:
+    - admin_member
+    - employee_member
+
+position_closed:
+  name: Fill in description
+  status: closed
+  taskable: closed_position (Position)
+  assignee: admin_member
+  due_date: <%= Time.zone.today %>
+  description: Just some text
+  tenant: toughbyte_tenant
+  watchers:
+    - admin_member
+
+candidate:
+  name: Conduct first interview
+  status: open
+  taskable: john (Candidate)
+  assignee: admin_member
+  due_date: <%= Time.zone.yesterday %>
+  description: Just some text
+  tenant: toughbyte_tenant
+  watchers:
+    - admin_member
+
+candidate2:
+  name: Conduct second interview
+  status: open
+  taskable: john (Candidate)
+  assignee: admin_member
+  due_date: <%= Time.zone.today %>
+  description: Just some text
+  tenant: toughbyte_tenant
+  watchers:
+    - admin_member
+
+candidate3:
+  name: Conduct interview with a client
+  status: open
+  taskable: john (Candidate)
+  assignee: admin_member
+  due_date: <%= Time.zone.tomorrow %>
+  description: Just some text
+  tenant: toughbyte_tenant
+  watchers:
+    - admin_member
+
+candidate4:
+  name: Present candidate
+  status: open
+  taskable: john (Candidate)
+  assignee: admin_member
+  due_date: <%= 3.days.after %>
+  description: Just some text
+  tenant: toughbyte_tenant
+  watchers:
+    - admin_member
+
+candidate5:
+  name: Hire candidate
+  status: open
+  taskable: john (Candidate)
+  assignee: admin_member
+  due_date: <%= 9.days.after %>
+  description: Just some text
+  tenant: toughbyte_tenant
+  watchers:
+    - admin_member
+
+no_taskable:
+  name: Process inbound candidates
+  status: open
+  assignee: admin_member
+  due_date: <%= Time.zone.today %>
+  description: Just some text
+  tenant: toughbyte_tenant
+  watchers:
+    - employee_member
+    - admin_member
+
+candidate6:
+  name: One-handed clap
+  status: open
+  taskable: ivan_ivanov (Candidate)
+  assignee: acme_alex_member
+  due_date: <%= Time.zone.yesterday %>
+  description: Just some text
+  tenant: acme_tenant
+  watchers:
+    - acme_grigoriy_member

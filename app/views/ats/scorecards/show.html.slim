@@ -1,0 +1,84 @@
+- ats_title(@scorecard.title)
+
+ruby:
+  position_stage = @scorecard.position_stage
+  position_stage_title = "#{position_stage.name} stage"
+  position_stage_title << " (deleted)" if position_stage.deleted
+
+#profile.row
+  .col-12.col-lg-7.col-xl-8
+
+    .h1.mb-3 #{@scorecard.title}
+
+    = render LabeledComponent.new( \
+      class: "mb-2",
+      left_layout_class: "col-auto",
+      right_layout_class: "col",
+      right_class: "ps-0 col-form-label-sm" \
+    ) do |c|
+      - c.with_label("Candidate", style: "min-width: 100px;")
+      - candidate = @scorecard.placement.candidate
+      = link_to(candidate.full_name, ats_candidate_path(candidate))
+    = render LabeledComponent.new( \
+      class: "mb-2",
+      left_layout_class: "col-auto",
+      right_layout_class: "col",
+      right_class: "ps-0 col-form-label-sm" \
+    ) do |c|
+      - c.with_label("Position", style: "min-width: 100px;")
+      - position = @scorecard.placement.position
+      - if allowed_to?(:show?, position, with: ATS::PositionPolicy)
+        = link_to(position.name, ats_position_path(position))
+      - else
+        = position.name
+    = render LabeledComponent.new( \
+      class: "mb-2",
+      left_layout_class: "col-auto",
+      right_layout_class: "col",
+      right_class: "ps-0 col-form-label-sm" \
+    ) do |c|
+      - c.with_label("Stage", style: "min-width: 100px;")
+      = position_stage_title
+    = render LabeledComponent.new( \
+      class: "mb-4",
+      left_layout_class: "col-auto",
+      right_layout_class: "col",
+      right_class: "ps-0 col-form-label-sm" \
+    ) do |c|
+      - c.with_label("Interviewer", style: "min-width: 100px;")
+      = @scorecard.interviewer.name
+
+    - @scorecard.scorecard_questions.each do |question|
+      .profile-card
+        .card.mb-3
+          .card-header
+            span.card-title
+              = question.question
+          .card-body
+            - if (answer = question.answer).present?
+              = answer
+            - else
+              .text-secondary No answer
+
+    .profile-card
+      .card
+        .card-header
+          span.card-title Summary
+        .card-body
+          .row.g-1
+            .col-auto.mb-2
+              = score_icon(@scorecard.score, with_text: true)
+          - if (summary = @scorecard.summary).present?
+            = summary
+    .card-submit.hstack.gap-2.mt-4.justify-content-between
+      = render ButtonLinkComponent.new(edit_ats_scorecard_path)
+        | Edit
+      - if allowed_to?(:destroy?, @scorecard)
+          = form_with url: ats_scorecard_path(@scorecard), method: :delete
+            = render ButtonComponent.new(variant: :danger,
+                                        data: { toggle: "ats-confirmation",
+                                                title: "Delete scorecard?",
+                                                btn_cancel_label: "Cancel",
+                                                btn_ok_label: "Delete",
+                                                btn_ok_class: "btn btn-danger btn-small" })
+              | Delete

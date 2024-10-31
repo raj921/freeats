@@ -1,0 +1,159 @@
+/# locals: (task:,
+/ assignee_options:,
+/ watchers_options:,
+/ added_by_account:,
+/ added_on_time:,
+/ grid:
+/)
+
+- label_classes = "col-lg-3 col-form-label-sm text-gray-600"
+
+= turbo_frame_tag :turbo_task_main_content, data: { controller: "turbo-modal-tasks" }
+  / First row
+  .hstack.gap-3
+    / Checkbox and title show
+    = form_with model: task, url: update_status_ats_task_path(task, grid:),
+                class: "turbo-instant-submit d-inline-block" do |f|
+      .task-large-checkbox class=("task-overdue-checkbox" if task.overdue?)
+        - checkbox_id = "#{dom_id(task)}-status"
+        = f.check_box :status,
+                      { class: "form-check-input mt-0", id: checkbox_id },
+                      "closed", "open"
+        label.form-check-label for=checkbox_id
+    .col data-controller="inline-edit-form"
+      .hstack.justify-content-between data-inline-edit-form-target="showView"
+        h2.d-inline-block.mb-0 style="min-height: 32px;"
+          = task.name
+        = render IconButtonComponent.new( \
+                   :pencil,
+                   variant: :ghost,
+                   data: { \
+                     action: "inline-edit-form#show",
+                     bs_toggle: :tooltip,
+                     bs_title: t("core.edit_button"),
+                   } \
+                 )
+      / Title edit
+      .col.hidden data-inline-edit-form-target="editView"
+        = form_with model: task,
+                    url: ats_task_path(task, grid:),
+                    data: { controller: "enter-turbo-submit" } do |f|
+          .hstack.gap-2
+            = render TextInputComponent.new(f, method: :name, required: true,
+                                            data: { inline_edit_form_target: "focusInput" })
+            = render ButtonComponent.new(data: { bs_toggle: "tooltip",
+                                                 bs_title: "Ctrl + Enter",
+                                                 enter_turbo_submit_target: "shortcut" })
+              = t("core.save_button")
+            = render ButtonComponent.new(variant: :secondary,
+                                         type: :button,
+                                         data: { action: "inline-edit-form#hide" })
+              = t("core.cancel_button")
+
+  / Second row
+  .d-flex.flex-wrap.mt-3.column-gap-4
+    / Assignee
+    = form_with model: task, url: ats_task_path(task, grid:),
+                class: "row flex-fill col-12 col-lg-6 turbo-instant-submit" do |f|
+      = f.label :assignee_id, t("core.assignee"), class: label_classes
+      .col-lg-9
+        = f.select :assignee_id, assignee_options, { include_blank: false },
+                   class: "form-control selectpicker flex-fill",
+                   data: { live_search: true,
+                           turbo_modal_tasks_target: "selectAssignee selectpicker" }
+
+    / Watchers
+    = form_with model: task, url: ats_task_path(task, grid:),
+                class: "row flex-fill col-12 col-lg-6",
+                data: { turbo_modal_tasks_target: "watchersForm" } do |f|
+      = f.label :watcher_ids, t("core.watchers"), class: label_classes
+      .col-lg-9
+        = f.select :watcher_ids,
+                   watchers_options,
+                   { selected: task.watchers.ids, disabled: task.assignee_id },
+                   include_blank: true,
+                   class: "form-control selectpicker",
+                   multiple: true,
+                   data: { live_search: true,
+                           turbo_modal_tasks_target: "selectPickerWatchers selectpicker" }
+
+  / Third row
+  .d-flex.flex-wrap.mt-lg-3.column-gap-4
+    / Due date
+    = form_with model: task, url: ats_task_path(task, grid:),
+                class: "row flex-fill col-12 col-lg-6 turbo-instant-submit" do |f|
+      = f.label :due_date_alt, t("core.due_date"), class: label_classes
+      .col-lg-9 data-controller="humanized-datepicker"
+          = render TextInputComponent.new("task[due_date]", value: task.due_date, id: nil,
+                                          data: { humanized_datepicker_target: "datepicker" },
+                                          class: "hidden", required: true)
+          = render TextInputComponent.new("task[due_date_alt]", class: "bg-white", readonly: true,
+                                          data: { action: "click->humanized-datepicker#showDatepicker",
+                                                  humanized_datepicker_target: "datepickerAlt" })
+    / Repeat
+    = form_with model: task, url: ats_task_path(task, grid:),
+                class: "row flex-fill col-12 col-lg-6 turbo-instant-submit" do |f|
+      = f.label :repeat_interval, t("tasks.repeat"), class: label_classes
+      .col-lg-9
+        = f.select :repeat_interval,
+                   Task.repeat_intervals.transform_keys(&:humanize),
+                   { selected: task.repeat_interval },
+                   class: "form-control selectpicker",
+                   data: { turbo_modal_tasks_target: "selectpicker" }
+
+  / Fourth row
+  .d-flex.flex-wrap.mt-3.column-gap-4
+    / Added by
+    .row.flex-fill.align-items-center.col-6
+      = label_tag :added_by, t("core.added_by"), class: ["col col-sm-4", label_classes]
+      .col.col-sm-8.col-lg-9.hstack.gap-2
+        - if added_by_account.present?
+          = picture_avatar_icon added_by_account.avatar, {}, class: "small-avatar-thumbnail"
+          = added_by_account.name
+        - else
+          = inline_svg_tag "ats-icon.svg", class: "small-avatar-thumbnail"
+          | FreeATS
+
+    / Added on
+    .row.flex-fill.align-items-center.col-6
+      = label_tag :added_on, t("core.added_on"), class: ["col col-sm-5", label_classes]
+      .col.col-sm-7.col-lg-9.hstack
+        = added_on_time.to_fs(:date)
+
+  / Fifth row
+  .d-flex.flex-wrap.mt-3.column-gap-4 data-controller="inline-edit-form"
+    .col-12 data-inline-edit-form-target="showView"
+      / Description show
+      .vstack.gap-2
+        .hstack.justify-content-between style="height: 32px;"
+          = label_tag :description_show, t("tasks.description"), class: "col-form-label-sm text-gray-600"
+          = render IconButtonComponent.new( \
+                     :pencil,
+                     variant: :ghost,
+                     data: { \
+                       action: "inline-edit-form#show",
+                       bs_toggle: :tooltip,
+                       bs_title: t("core.edit_button"),
+                     } \
+                   )
+        .w-100 style="min-height: 2rem;"
+          = preformatted_plain_format(task.description)
+    = form_with model: task, url: ats_task_path(task, grid:), class: "col-12 hidden",
+                data: { inline_edit_form_target: "editView", controller: "enter-turbo-submit" } do |f|
+      / Description edit
+      .vstack.gap-2
+        .hstack.gap-2
+          = f.label :description, t("tasks.description"),
+                    class: "col-form-label-sm flex-grow-1", style: "height: 32px;"
+          = render ButtonComponent.new(data: { action: "inline-edit-form#hide",
+                                               bs_toggle: "tooltip",
+                                               bs_title: "Ctrl + Enter",
+                                               enter_turbo_submit_target: "shortcut" })
+            = t("core.save_button")
+          = render ButtonComponent.new(variant: :secondary,
+                                       type: :button,
+                                       data: { action: "inline-edit-form#hide" })
+            = t("core.cancel_button")
+        .w-100
+          = f.text_area :description, rows: 4, class: "form-control overflow-auto",
+                        data: { inline_edit_form_target: "focusInput" }

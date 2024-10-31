@@ -1,0 +1,22 @@
+= turbo_frame_tag :turbo_header_section
+  #header-edit
+    = card_edit(card_name: "header", target_model: @position,
+                target_url: update_header_ats_position_path(@position)) do |form|
+      = render LabeledComponent.new(class: "mb-2") do |c|
+        - c.with_label("Name", form:, for_field: :name)
+        = render TextInputComponent.new(form, method: :name, required: true)
+      = render LabeledComponent.new(class: "mb-2") do |c|
+        - c.with_label(t("core.city"), form:, for_field: :location_id)
+        = render SingleSelectComponent.new( \
+            form,
+            method: :location_id,
+            required: true,
+            remote: { \
+              search_url: fetch_locations_api_v1_locations_path(types: "city", q: "QUERY"),
+              options: compose_location_option_for_select(@position.location),
+            },
+          )
+
+      - if allowed_to?(:destroy?, @position, with: ATS::PositionPolicy)
+        = render LabeledComponent.new(class: "mt-3")
+          = render "shared/profile/delete_button", object: @position

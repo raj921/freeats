@@ -1,0 +1,45 @@
+// This file contains everything that can't be properly categorized.
+
+@use "mixins";
+
+.small-avatar-thumbnail {
+  @extend .rounded;
+  max-height: 2rem;
+  width: 2rem;
+}
+
+.list-reset {
+  padding-left: 0;
+  list-style: none;
+}
+
+// Global colors for links also affect datepicker date cells.
+.ui-datepicker-calendar {
+  a {
+    color: unset !important;
+    text-decoration: none !important;
+
+    &:hover {
+      color: unset !important;
+    }
+    &:visited {
+      color: unset !important;
+    }
+  }
+  a.ui-state-active {
+    color: white !important;
+  }
+  a.ui-state-highlight {
+    color: unset !important;
+  }
+}
+
+.ui-datepicker-header {
+  .ui-icon-circle-triangle-w {
+    @include mixins.icon("caret-left", "filled");
+  }
+
+  .ui-icon-circle-triangle-e {
+    @include mixins.icon("caret-right", "filled");
+  }
+}

@@ -1,0 +1,31 @@
+$font-family-sans-serif: "Open Sans", Arial, Helvetica, sans-serif;
+
+// jQuery
+@import "jquery-ui/themes/base/theme";
+@import "jquery-ui/themes/base/datepicker";
+
+// Bootstrap
+@import "../src/shared/variables";
+@import "../src/shared/colors";
+@import "bootstrap/scss/bootstrap";
+@import "tributejs/dist/tribute";
+@import "bootstrap-select/sass/bootstrap-select";
+
+@import "../src/shared/scaffolds";
+@import "../src/shared/datagrid";
+@import "../src/shared/profile";
+@import "../src/shared/navbar";
+@import "../src/shared/footer";
+@import "../src/shared/common";
+@import "../src/shared/selectize";
+@import "../src/shared/trix";
+
+@import "../src/ats/main";
+@import "../src/ats/positions";
+@import "../src/ats/candidates";
+@import "../src/ats/task";
+@import "../src/ats/quick_search";
+@import "../src/ats/recaptcha";
+
+// Custom component styles
+@import "../src/shared/components";

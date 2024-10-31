@@ -1,0 +1,65 @@
+john_email_address1:
+  candidate: john
+  address: john@gmail.com
+  list_index: 1
+  type: personal
+  source: linkedin
+  status: current
+  created_via: manual
+  created_by: admin_member
+  added_at: 2016-01-01
+  tenant: toughbyte_tenant
+
+john_email_address2:
+  candidate: john
+  address: john@yahoo.com
+  list_index: 2
+  type: personal
+  source: linkedin
+  status: current
+  tenant: toughbyte_tenant
+
+john_duplicate_email_address:
+  candidate: john_duplicate
+  address: john@gmail.com
+  list_index: 1
+  type: personal
+  source: linkedin
+  status: current
+  tenant: toughbyte_tenant
+
+jane_email_address:
+  candidate: jane
+  address: jane@gmail.com
+  list_index: 1
+  type: work
+  source: other
+  status: current
+  tenant: toughbyte_tenant
+
+jake_email_address:
+  candidate: jake
+  address: jake@trujillo.com
+  list_index: 1
+  type: personal
+  source: other
+  status: current
+  tenant: toughbyte_tenant
+
+sam_email_address:
+  candidate: sam
+  address: sam@gmail.com
+  list_index: 1
+  type: personal
+  source: other
+  status: current
+  tenant: toughbyte_tenant
+
+ivan_ivanov_email_address:
+  candidate: ivan_ivanov
+  address: ivanov@yandex.kz
+  list_index: 1
+  type: personal
+  source: other
+  status: current
+  tenant: acme_tenant

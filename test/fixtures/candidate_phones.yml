@@ -1,0 +1,17 @@
+john_phone:
+  candidate: john
+  phone: "+442087599036"
+  type: personal
+  source: linkedin
+  status: current
+  list_index: 1
+  tenant: toughbyte_tenant
+
+jane_phone:
+  candidate: jane
+  phone: "+12136210002"
+  type: work
+  source: other
+  status: current
+  list_index: 1
+  tenant: toughbyte_tenant

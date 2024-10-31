@@ -1,0 +1,51 @@
+- placement = placement_pipeline_card
+
+.card.mt-2.p-2.placement-partial [data-controller="pipeline-placements"
+    data-placements-next-stage-column-id="#{placement.next_stage}-stage-placements"
+    data-pipeline-column-target="entityCard" id=dom_id(placement)]
+  - if current_member.id == placement.candidate.recruiter_id
+    .card-triangle
+
+  .d-flex.gap-3
+    .card-avatar.col-auto
+      = picture_avatar_icon placement.candidate.avatar, {}, class: "rounded"
+    .card-right-container
+      .d-flex.justify-content-between.flex-column.h-100.w-100
+        .card-title.mb-0
+          .d-flex.justify-content-between.font-medium
+            = link_to placement.candidate.full_name,
+                      tab_ats_candidate_path(placement.candidate_id, :info),
+                      class: "text-truncate",
+                      title: placement.candidate.full_name
+        .d-flex.col-12.justify-content-end
+          .d-flex.gap-1.col-sm-12.justify-content-between class="#{'col-12' if placement.disqualified?}"
+            - if placement.disqualified?
+              .text-secondary.align-self-center.text-truncate title=placement.status.humanize
+                = placement.status.humanize
+            - if allowed_to?(:change_stage?, placement, with: ATS::PlacementPolicy)
+              .card-hidden-container [
+                  class=("d-flex flex-row-reverse gap-1 col-sm-12 justify-content-sm-between" if placement.reserved?)
+                  data-pipeline-placements-target="disqualifyButtonHiddenContainer"]
+                = render "ats/placements/disrequalify_buttons",
+                         placement:,
+                         data_display_static: true,
+                         position_pipeline_card: true
+              - if placement.qualified? && placement.next_stage.present?
+                .card-hidden-container
+                  = form_with url: change_status_ats_placement_path(placement, position_pipeline_card: true)
+                    = render IconButtonComponent.new( \
+                               :clock,
+                               name: :status,
+                               value: :reserved,
+                               data: { bs_toggle: :tooltip, bs_title: "Reserve", bs_placement: :bottom },
+                             )
+                .card-hidden-container
+                  - if placement.next_stage.present?
+                    = form_with url: change_stage_ats_placement_path(placement, position_pipeline_card: true),
+                              data: { turbo_frame: :turbo_modal_window }
+                      = render IconButtonComponent.new( \
+                                 :arrow_right,
+                                 name: :stage,
+                                 value: placement.next_stage,
+                                 class: "placement-button",
+                               )

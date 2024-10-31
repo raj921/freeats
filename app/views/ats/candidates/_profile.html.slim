@@ -1,0 +1,136 @@
+- ats_title("#{@candidate.full_name} #{@active_tab.humanize(capitalize: false)}")
+- render_reassign_button = proc do |mobile: false|
+  = render "shared/profile/reassign_button",
+            currently_assigned_account: @assigned_recruiter&.account,
+            tooltip_title: t("core.recruiter"),
+            target_model: @candidate,
+            target_url: assign_recruiter_ats_candidate_path(@candidate),
+            input_button_name: "candidate[recruiter_id]",
+            unassignment_label: t("core.unassign_recruiter"),
+            allowed_to_edit: allowed_to?(:assign_recruiter?),
+            mobile:
+
+/ HEADER
+- content_for :header
+  #header-card.col.profile-card
+    = render "ats/candidates/header_show"
+
+  .turbo_candidate_reassign_recruiter_button.d-lg-none.col-12.mt-2.mb-3
+    = capture(mobile: true, &render_reassign_button)
+
+/ HEADER END
+
+/ TAB LIST
+
+- content_for :tab_list
+  ruby:
+    tab_labels = {
+      info: "Info",
+      activities: "Activities"
+    }
+
+  - tab_labels[:tasks] = capture
+    | Tasks
+    = render partial: "ats/tasks/tab_counter", locals: { pending_tasks_count: @pending_tab_tasks_count }
+  - tab_labels[:emails] = capture
+    | Emails
+    - if @email_count.positive?
+      | &nbsp;
+      span.badge.bg-secondary = @email_count
+
+  - tab_labels[:scorecards] = capture
+    | Scorecards
+    - if @scorecards_count.positive?
+      | &nbsp;
+      span.badge.bg-secondary = @scorecards_count
+
+  - tab_labels[:files] = capture
+    | Files
+    - if @candidate.files.size > 1 && @candidate.cv.present? \
+         || @candidate.files.size.positive? && @candidate.cv.blank?
+      | &nbsp;
+      span.badge.bg-secondary = @candidate.files.size
+
+  ul.nav.d-none.d-md-flex
+    - if allowed_to?(:show_info?, @candidate)
+      li.nav-item
+        = link_to tab_labels[:info], tab_ats_candidate_path(@candidate, :info),
+                  class: "nav-link #{'active' if @active_tab == 'info'}"
+    - if allowed_to?(:show_tasks?, @candidate)
+      li.nav-item
+        = link_to tab_labels[:tasks], tab_ats_candidate_path(@candidate, :tasks),
+                  class: "nav-link #{'active' if @active_tab == 'tasks'}"
+    - if allowed_to?(:show_emails?, @candidate)
+      li.nav-item
+        = link_to tab_labels[:emails], tab_ats_candidate_path(@candidate, :emails),
+                  class: "nav-link #{'active' if @active_tab == 'emails'}"
+    - if allowed_to?(:show_scorecards?, @candidate)
+      li.nav-item
+        = link_to tab_labels[:scorecards], tab_ats_candidate_path(@candidate, :scorecards),
+                  class: "nav-link #{'active' if @active_tab == 'scorecards'}"
+    - if allowed_to?(:show_files?, @candidate)
+      li.nav-item
+        = link_to tab_labels[:files], tab_ats_candidate_path(@candidate, :files),
+                  class: "nav-link #{'active' if @active_tab == 'files'}"
+    - if allowed_to?(:show_activities?, @candidate)
+      li.nav-item
+        = link_to tab_labels[:activities], tab_ats_candidate_path(@candidate, :activities),
+                  class: "nav-link #{'active' if @active_tab == 'activities'}"
+  .d-md-none.dropdown.w-100.profile-mobile-nav
+    button.btn.form-control.d-flex.align-items-center.text-dark.dropdown-toggle.w-100.px-3[
+        id="dropdownNavLink" data-bs-toggle="dropdown"]
+      = tab_labels[@active_tab.to_sym]
+    ul.dropdown-menu.w-100 aria-labelledby="dropdownNavLink"
+      - if allowed_to?(:show_info?, @candidate)
+        li = link_to tab_labels[:info], tab_ats_candidate_path(@candidate, :info),
+                     class: "dropdown-item #{'active' if @active_tab == 'info'}"
+      - if allowed_to?(:show_tasks?, @candidate)
+        li = link_to tab_labels[:tasks], tab_ats_candidate_path(@candidate, :tasks),
+                     class: "dropdown-item #{'active' if @active_tab == 'tasks'}"
+      - if allowed_to?(:show_emails?, @candidate)
+        li = link_to tab_labels[:emails], tab_ats_candidate_path(@candidate, :emails),
+                     class: "dropdown-item #{'active' if @active_tab == 'emails'}"
+      - if allowed_to?(:show_scorecards?, @candidate)
+        li = link_to tab_labels[:scorecards], tab_ats_candidate_path(@candidate, :scorecards),
+                     class: "dropdown-item #{'active' if @active_tab == 'scorecards'}"
+      - if allowed_to?(:show_files?, @candidate)
+        li = link_to tab_labels[:files], tab_ats_candidate_path(@candidate, :files),
+                     class: "dropdown-item #{'active' if @active_tab == 'files'}"
+      - if allowed_to?(:show_activities?, @candidate)
+        li = link_to tab_labels[:activities], tab_ats_candidate_path(@candidate, :activities),
+                     class: "dropdown-item #{'active' if @active_tab == 'activities'}"
+
+/ TABS LIST END
+
+/ SIDE INFO
+
+- content_for :side_info
+  .turbo_candidate_reassign_recruiter_button.col-12.d-none.d-lg-block
+    = capture(&render_reassign_button)
+  = render partial: "ats/candidates/placements_panel",
+           locals: { candidate: @candidate,
+                     relevant_placements: @relevant_placements,
+                     irrelevant_placements: @irrelevant_placements,
+                     positions_for_quick_assignment: @positions_for_quick_assignment }
+  hr
+    = render partial: "ats/candidates/notes_panel",
+            locals: { all_active_members: @all_active_members,
+                      suggested_names: @suggested_names,
+                      note_threads: @note_threads,
+                      additional_create_param_input: \
+                        hidden_field_tag("note[note_thread][candidate_id]", @candidate.id),
+                      hide_visibility_controls: false }
+
+/ SIDE INFO END
+
+/ BODY BOTTOM
+
+- content_for :body_bottom
+  #turbo_merge_dialog_section
+    - if @duplicates.size.positive? && allowed_to?(:merge_duplicates?)
+      = render "ats/candidates/merge_duplicates", candidate: @candidate, duplicates: @duplicates
+  #merge-candidates-modal
+
+/ BODY BOTTOM END
+div id="#{@page_id}-#{@active_tab}"
+  = yield

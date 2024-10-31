@@ -1,0 +1,24 @@
+Delivered-To: arthur.morgan@example.com
+MIME-Version: 1.0
+From: Stefan Hammond <stefan.hammond@example.com>
+Date: Thu, 25 Jan 2024 07:59:22 +0600
+Message-ID: <CAHj9ApeDMFnA-nGED5MGsLr3kM3ZF7qztj75To_CxO5Ft7jF+Q@mail.gmail.com>
+Subject: Report for 25.01.24
+To: larry.grant@example.com, Arthur Morgan <arthur.morgan@example.com>
+Content-Type: multipart/alternative; boundary="000000000000dc78cd060fbb87e8"
+Precedence: list
+Mailing-list: list developers@example.com; contact developers+owners@example.com
+List-ID: <developers.example.com>
+X-Spam-Checked-In-Group: developers@example.com
+X-Google-Group-Id: 494641124923
+List-Post: <https://groups.google.com/a/example.com/group/developers/post>, <mailto:developers@example.com>
+List-Help: <https://support.google.com/a/example.com/bin/topic.py?topic=25838>,
+ <mailto:developers+help@example.com>
+
+--000000000000dc78cd060fbb87e8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+ZW5jb2RlZCBtZXNzYWdlIHRvIGJhc2U2NA==
+
+--000000000000dc78cd060fbb87e8

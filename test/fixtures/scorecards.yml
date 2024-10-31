@@ -1,0 +1,31 @@
+ruby_position_contacted_scorecard:
+  position_stage: ruby_position_contacted
+  title: Contacted stage scorecard template scorecard
+  interviewer: helen_member
+  placement: sam_ruby_contacted
+  score: "good"
+  tenant: toughbyte_tenant
+
+ruby_position_replied_scorecard:
+  position_stage: ruby_position_replied
+  title: Replied stage scorecard template scorecard
+  interviewer: helen_member
+  placement: sam_ruby_replied
+  score: "good"
+  tenant: toughbyte_tenant
+
+golang_position_verified_scorecard:
+  position_stage: golang_position_verified
+  title: Verified stage scorecard template scorecard
+  interviewer: helen_member
+  placement: jake_golang_verified
+  score: "relevant"
+  tenant: toughbyte_tenant
+
+golang_position_interviewed_scorecard:
+  position_stage: golang_position_interviewed
+  title: Interviewed stage scorecard template scorecard
+  interviewer: helen_member
+  placement: jake_golang_verified
+  score: "relevant"
+  tenant: toughbyte_tenant

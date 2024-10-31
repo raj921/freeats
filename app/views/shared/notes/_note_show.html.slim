@@ -1,0 +1,103 @@
+/# locals: (note:, thread:, all_active_members: nil, hide_visibility_controls: false)
+
+ruby:
+  is_first_note = note == thread.notes.min_by(&:created_at)
+  visible_members = thread.members.map { _1.account.name }.join("<br>")
+  # rubocop:disable Lint/UselessAssignment
+  visibility_tooltip_title =
+    thread.hidden? ? raw(t("notes.visible_to", members: visible_members)) : t("notes.change_visibility")
+  # rubocop:enable Lint/UselessAssignment
+  change_visibility = "disabled" unless allowed_to?(:update?, thread, with: NoteThreadPolicy)
+
+= turbo_frame_tag dom_id(note, "turbo"), target: "_top"
+  .tab-pane.note-show id="note-show-#{note.id}"
+    .card-title.d-flex.align-items-center
+      = picture_avatar_icon note.member.account.avatar, {}, class: "small-avatar-thumbnail"
+      .col
+        .ms-2
+          = note.member.account.name
+        - if note.updated_at - note.created_at > 5.minutes
+          span.text-secondary.ms-2 [data-bs-toggle="tooltip"
+              title=note.updated_at.to_fs(:datetime_full)]
+            = t("core.edited_time", time: short_time_ago_in_words(note.updated_at))
+        - else
+          span.text-secondary.ms-2 [data-bs-toggle="tooltip"
+            title=note.added_event.performed_at.to_fs(:datetime_full) ]
+            = t("core.created_time", time: short_time_ago_in_words(note.added_event.performed_at))
+      .d-flex.align-items-right.gap-2.ms-auto
+        - if is_first_note && (allowed_to?(:reply?, context: { note_thread: thread }, with: NotePolicy))
+          - unless hide_visibility_controls
+            span data-bs-toggle="tooltip" data-bs-title=visibility_tooltip_title data-bs-html="true"
+              = render IconButtonComponent.new( \
+                         thread.hidden ? :eye_off : :eye,
+                         size: :tiny,
+                         href: { url: change_visibility_modal_note_thread_path(thread, all_active_members:) },
+                         class: change_visibility,
+                         data: { turbo_frame: :turbo_modal_window },
+                       )
+
+          = render IconButtonComponent.new( \
+                     :corner_up_left,
+                     size: :tiny,
+                     class: "note-button-reply",
+                     data: { action: "note-thread#showReplyTab",
+                             bs_toggle: :tooltip,
+                             bs_title: t("core.reply_button") },
+                   )
+        - if allowed_to?(:toggle_reaction?, note)
+          = render "shared/notes/note_reaction",
+                    note:,
+                    reacted_names: note.reacted_member_names(current_member),
+                    member_react: current_member.reacted_to_note?(note)
+        span data-bs-toggle="tooltip" title=(t("core.more_button"))
+          = render IconButtonComponent.new( \
+                     :dots,
+                     size: :tiny,
+                     class: "placement-dropdown-toggle placement-button",
+                     type: :button,
+                     aria: { expanded: false, haspopup: true },
+                     data: { bs_toggle: :dropdown },
+                   )
+          ul.dropdown-menu.dropdown-menu-end
+            li
+              = render ButtonComponent.new( \
+                         variant: :custom,
+                         class: "dropdown-item",
+                         flex_content_position: :start,
+                         data: { controller: "copy-to-clipboard",
+                                 clipboard_text: note.url,
+                                 bs_title: t("notes.copied_placeholder"),
+                                 bs_trigger: :manual },
+                       ) do |c|
+                - c.with_icon(:link, position: :left)
+                = t("core.copy_link_button")
+            - if allowed_to?(:show_edit_view?, note)
+              li
+                = render ButtonLinkComponent.new( \
+                           show_edit_view_note_path(note, render_time: Time.zone.now),
+                           variant: :custom,
+                           class: "dropdown-item",
+                           flex_content_position: :start,
+                           data: { turbo_frame: dom_id(note, "turbo") },
+                         ) do |c|
+                  - c.with_icon(:pencil, position: :left)
+                  = t("core.edit_button")
+            - if allowed_to?(:destroy?, note)
+              li
+                = form_with url: note_path(note), method: :delete,
+                            data: { action: "candidate-notes#removeNoteCallback" }
+                  = hidden_field_tag :render_time, Time.zone.now
+                  = render ButtonComponent.new( \
+                             variant: :custom,
+                             class: "dropdown-item",
+                             flex_content_position: :start,
+                             data: { toggle: "ats-confirmation",
+                                     title: t("notes.remote_note"),
+                                     btn_cancel_label: t("core.cancel_button"),
+                                     btn_ok_label: t("core.remove_button"),
+                                     btn_ok_class: "btn btn-danger btn-small" },
+                           ) do |c|
+                    - c.with_icon(:trash, position: :left)
+                    = t("core.remove_button")
+
+    = preformatted_plain_format(note.text)

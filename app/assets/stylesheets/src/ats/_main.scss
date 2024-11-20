@@ -21,6 +21,17 @@ hr {
   margin: 1rem 0;
 }
 
+tr {
+  td.position_status,
+  td.avatar_image,
+  td.task_status {
+    &:first-child {
+      width: 64px;
+      text-align: center;
+    }
+  }
+}
+
 // TODO: replace this with flex > flex-grow-1 as it done on career site
 // place the footer at the bottom of the page
 .wrapper {

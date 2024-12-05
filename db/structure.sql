@@ -1255,7 +1255,7 @@ ALTER SEQUENCE public.email_messages_id_seq OWNED BY public.email_messages.id;
 CREATE TABLE public.email_templates (
     id bigint NOT NULL,
     name character varying NOT NULL,
-    subject character varying NOT NULL,
+    subject character varying DEFAULT ''::character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     tenant_id bigint NOT NULL
@@ -3539,17 +3539,10 @@ CREATE INDEX index_email_messages_on_tenant_id ON public.email_messages USING bt
 
 
 --
--- Name: index_email_templates_on_name; Type: INDEX; Schema: public; Owner: -
+-- Name: index_email_templates_on_tenant_id_and_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_email_templates_on_name ON public.email_templates USING btree (name);
-
-
---
--- Name: index_email_templates_on_tenant_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_email_templates_on_tenant_id ON public.email_templates USING btree (tenant_id);
+CREATE UNIQUE INDEX index_email_templates_on_tenant_id_and_name ON public.email_templates USING btree (tenant_id, name);
 
 
 --
@@ -4682,6 +4675,8 @@ ALTER TABLE ONLY public.scorecards
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20241204071813'),
+('20241204053019'),
 ('20241203142925'),
 ('20241202095447'),
 ('20241129084054'),

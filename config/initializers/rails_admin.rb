@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# TODO: replace with require
+require_relative "../../app/lib/rails_admin/config/actions/delete_account"
+# require "rails_admin/config/actions/delete_account"
+
+RailsAdmin::Config::Actions.register(RailsAdmin::Config::Actions::DeleteAccount)
+
 RailsAdmin.config do |config|
   config.asset_source = :sprockets
 
@@ -36,9 +42,12 @@ RailsAdmin.config do |config|
     bulk_delete
     show
     edit
-    delete
+    delete do
+      except %w[Account]
+    end
     show_in_app
 
+    delete_account
     ## With an audit adapter, you can add:
     # history_index
     # history_show

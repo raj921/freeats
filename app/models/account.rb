@@ -33,4 +33,30 @@ class Account < ApplicationRecord
   def active_member?
     member? && !member.inactive?
   end
+
+  def cascade_destroy
+    member_id = member.id
+    Position
+      .where(recruiter_id: member_id)
+      .find_each do |position|
+        position.update!(recruiter_id: nil)
+      end
+
+    Scorecard
+      .where(interviewer_id: member_id)
+      .find_each(&:destroy!)
+
+    Event
+      .where(actor_account_id: id)
+      .find_each do |event|
+        event.update!(actor_account: nil)
+      end
+
+    destroy!
+
+    true
+  rescue StandardError => e
+    errors.add(:base, e)
+    false
+  end
 end

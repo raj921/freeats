@@ -1,0 +1,7 @@
+en:
+  admin:
+    actions:
+      delete_account:
+        menu: Delete
+        title: Delete Account...
+        breadcrumb: Deletion
